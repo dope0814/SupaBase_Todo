@@ -19,13 +19,19 @@ class TodoService {
     DateTime? dueDate,
     TimeOfDay? dueTime,
   }) async {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      throw Exception('Authentication required to add a todo.');
+    }
+
     final Map<String, dynamic> insertData = {
       'task': task,
       'is_complete': false,
+      'user_id': user.id,
     };
 
     if (dueDate != null) {
-      insertData['due_date'] = DateFormat('yyy=MM-dd').format(dueDate);
+      insertData['due_date'] = DateFormat('yyyy-MM-dd').format(dueDate);
     }
     if (dueTime != null) {
       final hour = dueTime.hour.toString().padLeft(2, '0');

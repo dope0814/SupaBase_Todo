@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class TodoListItem extends StatelessWidget {
   final Map<String, dynamic> todo;
@@ -17,22 +16,26 @@ class TodoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime? dueDate =
-        todo['due_date'] != null ? DateTime.tryParse(todo['due_date']) : null;
-    final String? dueTimeStr = todo['due_time'];
-    TimeOfDay? dueTime;
+    // final DateTime? dueDate =
+    //     todo['due_date'] != null ? DateTime.tryParse(todo['due_date']) : null;
+    // final String? dueTimeStr = todo['due_time'];
+    // TimeOfDay? dueTime;
 
-    if (dueTimeStr != null && dueTimeStr.isNotEmpty) {
-      try {
-        final parts = dueTimeStr.split(':');
-        dueTime = TimeOfDay(
-          hour: int.parse(parts[0]),
-          minute: int.parse(parts[1]),
-        );
-      } catch (e) {
-        print('Error Parsing time: $e');
-      }
-    }
+    // if (dueTimeStr != null && dueTimeStr.isNotEmpty) {
+    //   try {
+    //     final parts = dueTimeStr.split(':');
+    //     dueTime = TimeOfDay(
+    //       hour: int.parse(parts[0]),
+    //       minute: int.parse(parts[1]),
+    //     );
+    //   } catch (e) {
+    //     print('Error Parsing time: $e');
+    //   }
+    // }
+
+    final String? formattedDate = todo['formatted_date'];
+    final String? formattedTime = todo['formatted_time'];
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Dismissible(
@@ -73,7 +76,7 @@ class TodoListItem extends StatelessWidget {
                     value: todo['is_complete'],
                     onChanged: onToggleComplete,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       todo['task'],
@@ -91,7 +94,7 @@ class TodoListItem extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _buildDateTimeInfo(context, dueDate, dueTime),
+                  _buildDateTimeInfo(context, formattedDate, formattedTime),
                 ],
               ),
             ),
@@ -101,11 +104,7 @@ class TodoListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildDateTimeInfo(
-    BuildContext context,
-    DateTime? date,
-    TimeOfDay? time,
-  ) {
+  Widget _buildDateTimeInfo(BuildContext context, String? date, String? time) {
     if (date == null && time == null) return const SizedBox.shrink();
 
     return Row(
@@ -113,19 +112,13 @@ class TodoListItem extends StatelessWidget {
         if (date != null) ...[
           Icon(Icons.calendar_today, size: 14, color: Colors.grey[500]),
           const SizedBox(width: 4),
-          Text(
-            DateFormat('yyyy-MM-dd').format(date),
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
+          Text(date, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         ],
-        if (date != null && time != null) const SizedBox(width: 8),
+        if (date != null && time != null) const SizedBox(width: 12),
         if (time != null) ...[
           Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
           const SizedBox(width: 4),
-          Text(
-            time.format(context),
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
+          Text(time, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         ],
       ],
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todo_app/screens/auth_page.dart';
 import 'package:todo_app/services/todo_service.dart';
 import 'package:todo_app/widgets/todo_form_content.dart';
 import 'package:todo_app/widgets/todo_list_item.dart';
@@ -23,7 +25,16 @@ class _TodoListPageState extends State<TodoListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Tasks')),
+      appBar: AppBar(
+        title: const Text('My Tasks'),
+        actions: [
+          IconButton(
+            onPressed: _signOut,
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
       body: StreamBuilder(
         stream: _todoStream,
         builder: (context, snapshot) {
@@ -110,22 +121,49 @@ class _TodoListPageState extends State<TodoListPage> {
             time,
             required isDateCleared,
             required isTimeCleared,
-          }) {
-            if (todo == null) {
-              _todoService.addTodo(task: task, dueDate: date, dueTime: time);
-            } else {
-              _todoService.updateTodo(
-                todo['id'],
-                task: task,
-                dueDate: date,
-                dueTime: time,
-                setDateNull: isDateCleared,
-                setTimeNull: isTimeCleared,
-              );
+          }) async {
+            try {
+              if (todo == null) {
+                _todoService.addTodo(task: task, dueDate: date, dueTime: time);
+              } else {
+                _todoService.updateTodo(
+                  todo['id'],
+                  task: task,
+                  dueDate: date,
+                  dueTime: time,
+                  setDateNull: isDateCleared,
+                  setTimeNull: isTimeCleared,
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${e.toString()}'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             }
           },
         );
       },
     );
+  }
+
+  Future<void> _signOut() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } on AuthApiException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthPage()));
+      }
+    }
   }
 }
