@@ -25,16 +25,16 @@ class _TodoListPageState extends State<TodoListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Tasks'),
-        actions: [
-          IconButton(
-            onPressed: _signOut,
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('My Tasks'),
+      //   actions: [
+      //     IconButton(
+      //       onPressed: _signOut,
+      //       icon: const Icon(Icons.logout),
+      //       tooltip: 'Logout',
+      //     ),
+      //   ],
+      // ),
       body: StreamBuilder(
         stream: _todoStream,
         builder: (context, snapshot) {

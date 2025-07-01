@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_app/screens/splash_page.dart';
-import 'package:todo_app/screens/todo_list_page.dart';
 import 'package:todo_app/theme/app_theme.dart';
 
 void main() async {
