@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_app/screens/auth_page.dart';
 import 'package:todo_app/screens/main_app_page.dart';
-import 'package:todo_app/screens/todo_list_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

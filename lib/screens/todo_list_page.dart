@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todo_app/screens/auth_page.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:todo_app/screens/auth_page.dart';
 import 'package:todo_app/services/todo_service.dart';
 import 'package:todo_app/widgets/todo_form_content.dart';
 import 'package:todo_app/widgets/todo_list_item.dart';
@@ -151,19 +151,19 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  Future<void> _signOut() async {
-    try {
-      await Supabase.instance.client.auth.signOut();
-    } on AuthApiException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthPage()));
-      }
-    }
-  }
+  // Future<void> _signOut() async {
+  //   try {
+  //     await Supabase.instance.client.auth.signOut();
+  //   } on AuthApiException catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+  //     );
+  //   } finally {
+  //     if (mounted) {
+  //       Navigator.of(
+  //         context,
+  //       ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthPage()));
+  //     }
+  //   }
+  // }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todo_app/screens/main_app_page.dart';
 import 'package:todo_app/screens/todo_list_page.dart';
 
 class AuthPage extends StatefulWidget {
@@ -15,6 +18,12 @@ class _AuthPageState extends State<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoginMode = true;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_APP_KEY']);
+  }
 
   Future<void> _authAction() async {
     if (_formKey.currentState!.validate()) {
@@ -59,6 +68,56 @@ class _AuthPageState extends State<AuthPage> {
             _isLoading = false;
           });
         }
+      }
+    }
+  }
+
+  //Kakao Login
+  Future<void> _signInWithKakao() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      OAuthToken token;
+      if (await isKakaoTalkInstalled()) {
+        token = await UserApi.instance.loginWithKakaoTalk();
+      } else {
+        token = await UserApi.instance.loginWithKakaoAccount();
+      }
+
+      if (token.idToken == null) {
+        throw const AuthException(
+          'Kakao ID Token is null. Check Kakao Developer Center setting.',
+        );
+      }
+
+      await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.kakao,
+        idToken: token.idToken!,
+        accessToken: token.accessToken,
+      );
+
+      if (mounted) {
+        _navigateToMainAppPage();
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -110,6 +169,20 @@ class _AuthPageState extends State<AuthPage> {
                       onPressed: _authAction,
                       child: Text(_isLoginMode ? 'Login' : 'Sing Up'),
                     ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _signInWithKakao,
+                  label: const Text(''),
+                  icon: Image.asset(
+                    'lib/assets/kakao_login.png',
+                    // height: 24,
+                    // width: 24,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFEE500),
+                    foregroundColor: Colors.black,
+                  ),
+                ),
                 TextButton(
                   onPressed:
                       () => {
@@ -129,5 +202,11 @@ class _AuthPageState extends State<AuthPage> {
         ),
       ),
     );
+  }
+
+  void _navigateToMainAppPage() {
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const MainAppPage()));
   }
 }

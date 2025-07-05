@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todo_app/screens/Calendar_page.dart';
+import 'package:todo_app/screens/calendar_page.dart';
 import 'package:todo_app/screens/auth_page.dart';
 import 'package:todo_app/screens/todo_list_page.dart';
 
