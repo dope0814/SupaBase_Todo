@@ -6,10 +6,15 @@ class TodoService {
   final _client = Supabase.instance.client;
 
   Stream<List<Map<String, dynamic>>> getTodosStream() {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
     return _client
         .from('todos')
         .stream(primaryKey: ['id'])
-        .eq('is_deleted', false)
+        .eq('user_id', user.id)
+        // .eq('is_deleted', false)
         .order('created_at', ascending: true);
   }
 

@@ -232,50 +232,63 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     ),
                 const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: _signInWithKakao,
-                  label: const Text(
-                    '카카오로 시작하기',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  icon: SvgPicture.asset(
-                    'lib/assets/icons/kakao_logo.svg',
-                    height: 24,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    // 3. 색상: 지정된 노란색 배경과 검은색 텍스트
-                    backgroundColor: const Color(0xFFFEE500),
-                    foregroundColor: const Color(0xFF191919),
-                    // 4. 모양 및 여백
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    elevation: 0, // 카카오 버튼은 보통 그림자가 없습니다.
-                  ),
-                ),
+                _isLoginMode
+                    ? ElevatedButton.icon(
+                      onPressed: _signInWithKakao,
+                      label: const Text(
+                        '카카오로 시작하기',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      icon: SvgPicture.asset(
+                        'lib/assets/icons/kakao_logo.svg',
+                        height: 24,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        // 3. 색상: 지정된 노란색 배경과 검은색 텍스트
+                        backgroundColor: const Color(0xFFFEE500),
+                        foregroundColor: const Color(0xFF191919),
+                        // 4. 모양 및 여백
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        elevation: 0, // 카카오 버튼은 보통 그림자가 없습니다.
+                      ),
+                    )
+                    : Center(),
                 const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  icon: SvgPicture.asset(
-                    'lib/assets/icons/google_logo.svg',
-                    height: 22,
-                  ),
-                  onPressed: _signInWithGoogle,
-                  label: const Text(
-                    '구글로 시작하기',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black.withValues(alpha: 0.8),
-                    backgroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: const BorderSide(color: Colors.grey, width: 1.5),
-                    ),
-                  ),
-                ),
+                _isLoginMode
+                    ? ElevatedButton.icon(
+                      icon: SvgPicture.asset(
+                        'lib/assets/icons/google_logo.svg',
+                        height: 22,
+                      ),
+                      onPressed: _signInWithGoogle,
+                      label: const Text(
+                        '구글로 시작하기',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black.withValues(alpha: 0.8),
+                        backgroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 50),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(
+                            color: Colors.grey,
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                    )
+                    : Center(),
                 TextButton(
                   onPressed:
                       () => {
