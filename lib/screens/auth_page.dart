@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_app/screens/main_app_page.dart';
@@ -25,6 +29,7 @@ class _AuthPageState extends State<AuthPage> {
     KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_APP_KEY']);
   }
 
+  // E-mail Login
   Future<void> _authAction() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -43,9 +48,7 @@ class _AuthPageState extends State<AuthPage> {
           );
         }
         if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const TodoListPage()),
-          );
+          _navigateToMainAppPage();
         }
       } on AuthException catch (e) {
         if (mounted) {
@@ -122,6 +125,56 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
+  //Google Login
+  Future<void> _signInWithGoogle() async {
+    try {
+      final webClient = dotenv.env['GOOGLE_WEB_CLIENT'];
+      final iosClient = dotenv.env['GOOGLE_IOS_CLIENT'];
+
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: iosClient,
+        serverClientId: webClient,
+      );
+      final googleUser = await googleSignIn.signIn();
+      final googleAuth = await googleUser!.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+
+      if (accessToken == null) {
+        throw 'No Access Token found.';
+      }
+      if (idToken == null) {
+        throw 'No ID Token found.';
+      }
+
+      await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+      );
+      if (mounted) {
+        _navigateToMainAppPage();
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -167,20 +220,60 @@ class _AuthPageState extends State<AuthPage> {
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton(
                       onPressed: _authAction,
-                      child: Text(_isLoginMode ? 'Login' : 'Sing Up'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                      ),
+                      child: Text(
+                        _isLoginMode ? '이메일로 시작하기' : '이메일로 회원가입',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: _signInWithKakao,
-                  label: const Text(''),
-                  icon: Image.asset(
-                    'lib/assets/kakao_login.png',
-                    // height: 24,
-                    // width: 24,
+                  label: const Text(
+                    '카카오로 시작하기',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  icon: SvgPicture.asset(
+                    'lib/assets/icons/kakao_logo.svg',
+                    height: 24,
                   ),
                   style: ElevatedButton.styleFrom(
+                    // 3. 색상: 지정된 노란색 배경과 검은색 텍스트
                     backgroundColor: const Color(0xFFFEE500),
-                    foregroundColor: Colors.black,
+                    foregroundColor: const Color(0xFF191919),
+                    // 4. 모양 및 여백
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    elevation: 0, // 카카오 버튼은 보통 그림자가 없습니다.
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  icon: SvgPicture.asset(
+                    'lib/assets/icons/google_logo.svg',
+                    height: 22,
+                  ),
+                  onPressed: _signInWithGoogle,
+                  label: const Text(
+                    '구글로 시작하기',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black.withValues(alpha: 0.8),
+                    backgroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: const BorderSide(color: Colors.grey, width: 1.5),
+                    ),
                   ),
                 ),
                 TextButton(

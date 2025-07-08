@@ -22,14 +22,32 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleTypeRole</key>
+	<string>Editor</string>
+	<key>CFBundleURLSchemes</key>
+	<array>
+		<string>com.googleusercontent.apps.40582455657-t5ru60mnmgeemdqicg9rrvm67iov16p0</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.dope.todo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao${dcede025286dd92d28b12b9be8ef884c}</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.dope.todo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.supabase.flutter-quickstart</string>
 			</array>
 		</dict>
 	</array>
@@ -63,5 +81,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<!-- TODO Replace this value: -->
+			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+			<string>com.googleusercontent.apps.40582455657-t5ru60mnmgeemdqicg9rrvm67iov16p0</string>
+		</array>
+	</dict>
+</array>
 </dict>
 </plist>
